@@ -33,5 +33,8 @@ class TestToolsApplicationTests {
 
 		val findEntity = repository.findById(1L)
 		assertNotNull(findEntity)
+
+		val idGreaterThan0 = repository.queryByIdGreaterThan0(0)
+		assertNotNull(idGreaterThan0);
 	}
 }
