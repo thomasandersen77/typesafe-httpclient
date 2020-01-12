@@ -1,5 +1,6 @@
 package no.spk.felles.ws.client;
 
+import no.spk.felles.ws.client.internal.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,9 +1,11 @@
-package no.spk.felles.ws.client;
+package no.spk.felles.ws.client.internal;
+
+import no.spk.felles.ws.client.Method;
 
 import java.net.URI;
 import java.util.Map;
 
-class RequestContext {
+public class RequestContext {
     private final URI uri;
     private final Map<String, Object> headers;
     private final Method method;

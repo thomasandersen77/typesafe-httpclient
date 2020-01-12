@@ -11,10 +11,10 @@ public class AuthHeaderSupplier implements HeaderSupplier {
 
     @Override
     public String get() {
-        HttpClientAdapter clientAdapter = new HttpClientAdapter(
+        HttpClient clientAdapter = new HttpClientImpl(
                 URI.create(url),
-                new HeadersBuilder(),
+                new HeaderBuilder(),
                 new JacksonJsonMappingProvider());
-        return clientAdapter.send(Method.POST,  LocalDate.now(), HttpClientAdapterTest.ApiResponse.class).getMessage();
+        return clientAdapter.send(Method.POST,  LocalDate.now(), HttpClientImplTest.ApiResponse.class).getMessage();
     }
 }

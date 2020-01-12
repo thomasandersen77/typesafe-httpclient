@@ -1,5 +1,6 @@
-package no.spk.felles.ws.client;
+package no.spk.felles.ws.client.internal;
 
+import no.spk.felles.ws.client.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,20 +17,20 @@ import java.util.function.Supplier;
 
 import static java.util.Collections.emptyList;
 
-public final class HttpClientAdapter {
-    private static final Logger log = LoggerFactory.getLogger(HttpClientAdapter.class);
+public abstract class AbstractHttpClient {
+    private static final Logger log = LoggerFactory.getLogger(AbstractHttpClient.class);
     private final URI uri;
-    private final HeadersBuilder headersBuilder;
+    private final HeaderBuilder headerBuilder;
     private JsonMappingProvider jsonMappingProvider;
     private List<HttpInterceptor> httpInterceptors;
 
-    public HttpClientAdapter(URI uri, HeadersBuilder headersBuilder, JsonMappingProvider jsonMappingProvider) {
-        this(uri, headersBuilder, jsonMappingProvider, emptyList());
+    public AbstractHttpClient(URI uri, HeaderBuilder headerBuilder, JsonMappingProvider jsonMappingProvider) {
+        this(uri, headerBuilder, jsonMappingProvider, emptyList());
     }
 
-    public HttpClientAdapter(URI uri, HeadersBuilder headersBuilder, JsonMappingProvider jsonMappingProvider, List<HttpInterceptor> httpInterceptors) {
+    public AbstractHttpClient(URI uri, HeaderBuilder headerBuilder, JsonMappingProvider jsonMappingProvider, List<HttpInterceptor> httpInterceptors) {
         this.uri = uri;
-        this.headersBuilder = headersBuilder;
+        this.headerBuilder = headerBuilder;
         this.jsonMappingProvider = jsonMappingProvider;
         this.httpInterceptors = httpInterceptors;
     }
@@ -39,7 +40,7 @@ public final class HttpClientAdapter {
             HttpClient client = HttpClient.newBuilder().build();
 
             String jsonBody = jsonMappingProvider.toJson(requestBody);
-            Map<String, Object> httpHeadersMap = headersBuilder.build();
+            Map<String, Object> httpHeadersMap = headerBuilder.build();
             RequestContext requestContext = new RequestContext(uri, httpHeadersMap, method, jsonBody);
             httpInterceptors.forEach(httpInterceptor -> {
                 httpInterceptor.doPreRequest(requestContext);

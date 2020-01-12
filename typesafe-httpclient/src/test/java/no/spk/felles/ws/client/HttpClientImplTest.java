@@ -5,9 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.common.ConsoleNotifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -19,7 +16,7 @@ import java.util.List;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class HttpClientAdapterTest {
+class HttpClientImplTest {
 
     static WireMockServer wiremock = new WireMockServer(WireMockConfiguration.options()
             .dynamicPort()
@@ -28,35 +25,34 @@ class HttpClientAdapterTest {
 
     @Test
     void sendGetRequest() {
-        HeadersBuilder headersBuilder = new HeadersBuilder()
+        HeaderBuilder headerBuilder = new HeaderBuilder()
                 .withHeader("Authorization", new AuthHeaderSupplier("http://localhost:" + wiremock.port() + "/authorize"))
                 .withHeader("Content-Type", "application/json");
 
-        HttpClientAdapter httpClientAdapter = new HttpClientAdapter(
+        HttpClient abstractHttpClient = new HttpClientImpl(
                 URI.create("http://localhost:" + wiremock.port() + "/"),
-                headersBuilder,
+                headerBuilder,
                 new JacksonJsonMappingProvider()
         );
 
-        ApiResponse res = httpClientAdapter.send(Method.GET, LocalDate.now(), ApiResponse.class);
+        ApiResponse res = abstractHttpClient.send(Method.GET, LocalDate.now(), ApiResponse.class);
         assertNotNull(res);
     }
 
     @Test
     void sendGetRequestWithHttpInterceptors() {
-        HeadersBuilder headersBuilder = new HeadersBuilder()
+        HeaderBuilder headerBuilder = new HeaderBuilder()
                 .withHeader("Authorization", new AuthHeaderSupplier("http://localhost:" + wiremock.port() + "/authorize"))
                 .withHeader("Content-Type", "application/json");
 
-        HttpClientAdapter httpClientAdapter = new HttpClientAdapter(
+        HttpClient abstractHttpClient = new HttpClientImpl(
                 URI.create("http://localhost:" + wiremock.port() + "/"),
-                headersBuilder,
-                new JacksonJsonMappingProvider()
+                headerBuilder,
+                new JacksonJsonMappingProvider(),
+                List.of(new LoggingHttpInterceptor())
         );
 
-        httpClientAdapter.setHttpInterceptors(List.of(new LoggingHttpInterceptor()));
-
-        ApiResponse res = httpClientAdapter.send(Method.GET, LocalDate.now(), ApiResponse.class);
+        ApiResponse res = abstractHttpClient.send(Method.GET, LocalDate.now(), ApiResponse.class);
         assertNotNull(res);
     }
 
