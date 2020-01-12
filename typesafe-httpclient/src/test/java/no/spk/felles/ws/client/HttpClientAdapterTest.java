@@ -82,11 +82,24 @@ class HttpClientAdapterTest {
         wiremock.stop();
     }
 
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
     static class ApiResponse {
+        private ApiResponse(){
+            // json serialization
+        }
+        public ApiResponse(String message, int code) {
+            this.message = message;
+            this.code = code;
+        }
+
         private String message;
         private int code;
+
+        public String getMessage() {
+            return message;
+        }
+
+        public int getCode() {
+            return code;
+        }
     }
 }

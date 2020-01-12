@@ -1,9 +1,10 @@
 package no.spk.felles.ws.client;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Slf4j
 public class LoggingHttpInterceptor implements HttpInterceptor {
+    private static final Logger log = LoggerFactory.getLogger(LoggingHttpInterceptor.class);
     @Override
     public void doPreRequest(RequestContext requestContext) {
         log.info("Incoming request > {}", requestContext);
