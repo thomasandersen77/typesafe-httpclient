@@ -16,6 +16,8 @@
     <modules>
         <module>db-test-tools</module>
         <module>remoting-test-tools</module>
+        <module>typesafe-httpclient</module>
     </modules>
+
 
 </project>
