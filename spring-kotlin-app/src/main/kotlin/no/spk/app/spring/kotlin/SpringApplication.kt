@@ -23,7 +23,7 @@ fun main(args: Array<String>) {
 class ClientConfiguration(){
 	@Bean
 	fun httpClient(@Value("url") url : String) : HttpClient {
-		return HttpClientImpl(URI.create(url), HeaderBuilder(), JacksonJsonMappingProvider())
+		return HttpClientImpl(URI.create(url), JacksonJsonMappingProvider())
 	}
 
 	inner class JacksonJsonMappingProvider : JsonMappingProvider{

@@ -1,13 +1,15 @@
 package no.spk.app.spring.kotlin
 
+import no.spk.felles.ws.client.HeaderBuilder
 import no.spk.felles.ws.client.HttpClient
 import org.springframework.stereotype.Component
 
 @Component
 class IntegrationService (val client: HttpClient){
 
-    fun callRemoteService(): String {
-        val response = client.get("{}", Response::class.java)
+    fun callRemoteService(vararg heaaders : String): String {
+        val headerBuilder = HeaderBuilder().withHeader("key", "value")
+        val response = client.get("{}", headerBuilder, Response::class.java)
         return response.message
     }
 

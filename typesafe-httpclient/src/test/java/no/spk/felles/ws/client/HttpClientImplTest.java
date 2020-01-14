@@ -29,12 +29,12 @@ class HttpClientImplTest {
                 .withHeader("Authorization", new AuthHeaderSupplier("http://localhost:" + wiremock.port() + "/authorize"))
                 .withHeader("Content-Type", "application/json");
 
-        HttpClient abstractHttpClient = new HttpClientImpl(
+        HttpClient httpClient = new HttpClientImpl(
                 URI.create("http://localhost:" + wiremock.port() + "/"),
                 new JacksonJsonMappingProvider()
         );
 
-        ApiResponse res = abstractHttpClient.get(LocalDate.now(), headerBuilder, ApiResponse.class);
+        ApiResponse res = httpClient.get(LocalDate.now(), headerBuilder, ApiResponse.class);
         assertNotNull(res);
     }
 
@@ -44,13 +44,13 @@ class HttpClientImplTest {
                 .withHeader("Authorization", new AuthHeaderSupplier("http://localhost:" + wiremock.port() + "/authorize"))
                 .withHeader("Content-Type", "application/json");
 
-        HttpClient abstractHttpClient = new HttpClientImpl(
+        HttpClient httpClient = new HttpClientImpl(
                 URI.create("http://localhost:" + wiremock.port() + "/"),
                 new JacksonJsonMappingProvider(),
                 List.of(new LoggingHttpInterceptor())
         );
 
-        ApiResponse res = abstractHttpClient.get(LocalDate.now(), headerBuilder, ApiResponse.class);
+        ApiResponse res = httpClient.get(LocalDate.now(), headerBuilder, ApiResponse.class);
         assertNotNull(res);
     }
 
