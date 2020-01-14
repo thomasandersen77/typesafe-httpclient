@@ -3,17 +3,16 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>test-tools</artifactId>
-        <groupId>io.mistafry.tools</groupId>
+        <artifactId>httpclient</artifactId>
+        <groupId>no.spk.felles</groupId>
         <version>0.1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
-    <artifactId>remoting-test-tools</artifactId>
+    <artifactId>spring-java-app</artifactId>
 
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
         <kotlin.version>1.3.61</kotlin.version>
         <spring-cloud.version>Hoxton.SR1</spring-cloud.version>
     </properties>
@@ -172,7 +171,7 @@
                         <plugin>spring</plugin>
                         <plugin>jpa</plugin>
                     </compilerPlugins>
-                    <jvmTarget>1.8</jvmTarget>
+                    <jvmTarget>11</jvmTarget>
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -192,7 +191,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <release>13</release>
+                    <release>11</release>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
         </plugins>

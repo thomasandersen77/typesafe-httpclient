@@ -1,7 +1,6 @@
 package no.spk.felles.ws.client;
 
 import java.net.URI;
-import java.time.LocalDate;
 
 public class AuthHeaderSupplier implements HeaderSupplier {
     private String url;
@@ -11,10 +10,23 @@ public class AuthHeaderSupplier implements HeaderSupplier {
 
     @Override
     public String get() {
-        HttpClient clientAdapter = new HttpClientImpl(
+        HttpClient httpClient = new HttpClientImpl(
                 URI.create(url),
                 new HeaderBuilder(),
                 new JacksonJsonMappingProvider());
-        return clientAdapter.send(Method.POST,  LocalDate.now(), HttpClientImplTest.ApiResponse.class).getMessage();
+        return httpClient.send(Method.POST,  new AuthRequest("user"), HttpClientImplTest.ApiResponse.class).getMessage();
+    }
+
+    static class AuthRequest {
+        private String username;
+        AuthRequest(){}
+
+        AuthRequest(String username) {
+            this.username = username;
+        }
+
+        public String getUsername() {
+            return username;
+        }
     }
 }
