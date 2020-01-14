@@ -20,22 +20,20 @@ import static java.util.Collections.emptyList;
 public abstract class AbstractHttpClient {
     private static final Logger log = LoggerFactory.getLogger(AbstractHttpClient.class);
     private final URI uri;
-    private final HeaderBuilder headerBuilder;
     private JsonMappingProvider jsonMappingProvider;
     private List<HttpInterceptor> httpInterceptors;
 
-    public AbstractHttpClient(URI uri, HeaderBuilder headerBuilder, JsonMappingProvider jsonMappingProvider) {
-        this(uri, headerBuilder, jsonMappingProvider, emptyList());
+    public AbstractHttpClient(URI uri, JsonMappingProvider jsonMappingProvider) {
+        this(uri, jsonMappingProvider, emptyList());
     }
 
-    public AbstractHttpClient(URI uri, HeaderBuilder headerBuilder, JsonMappingProvider jsonMappingProvider, List<HttpInterceptor> httpInterceptors) {
+    public AbstractHttpClient(URI uri, JsonMappingProvider jsonMappingProvider, List<HttpInterceptor> httpInterceptors) {
         this.uri = uri;
-        this.headerBuilder = headerBuilder;
         this.jsonMappingProvider = jsonMappingProvider;
         this.httpInterceptors = httpInterceptors;
     }
 
-    public <R> R send(Method method, Object requestBody, Class<R> responseType) {
+    public <R> R send(Method method, Object requestBody, HeaderBuilder headerBuilder, Class<R> responseType) {
         try {
             HttpClient client = HttpClient.newBuilder().build();
 

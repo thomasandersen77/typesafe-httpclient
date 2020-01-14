@@ -6,28 +6,36 @@ import java.net.URI;
 import java.util.List;
 
 public class HttpClientImpl extends AbstractHttpClient implements HttpClient{
-    public HttpClientImpl(URI uri, HeaderBuilder headerBuilder, JsonMappingProvider jsonMappingProvider) {
-        super(uri, headerBuilder, jsonMappingProvider);
+    public HttpClientImpl(URI uri, JsonMappingProvider jsonMappingProvider) {
+        super(uri, jsonMappingProvider);
     }
 
-    public HttpClientImpl(URI uri, HeaderBuilder headerBuilder, JsonMappingProvider jsonMappingProvider, List<HttpInterceptor> httpInterceptors) {
-        super(uri, headerBuilder, jsonMappingProvider, httpInterceptors);
+    public HttpClientImpl(URI uri, JsonMappingProvider jsonMappingProvider, List<HttpInterceptor> httpInterceptors) {
+        super(uri, jsonMappingProvider, httpInterceptors);
     }
 
     @Override
     public <T> T send(Method method, Object requestBody, Class<T> responseType) {
-        return super.send(method, requestBody, responseType);
+        return super.send(method, requestBody, new HeaderBuilder(), responseType);
     }
 
     @Override
     public <T> T post(Object requestBody, Class<T> responseType) {
-        return super.send(Method.POST, requestBody, responseType);
+        return super.send(Method.POST, requestBody, new HeaderBuilder(), responseType);
     }
 
     @Override
     public <T> T get(Object requestBody, Class<T> responseType) {
-        return super.send(Method.GET, requestBody, responseType);
+        return super.send(Method.GET, requestBody, new HeaderBuilder(), responseType);
     }
 
+    @Override
+    public <T> T post(Object requestBody, HeaderBuilder headerBuilder, Class<T> responseType) {
+        return super.send(Method.POST, requestBody, headerBuilder, responseType);
+    }
 
+    @Override
+    public <T> T get(Object requestBody, HeaderBuilder headerBuilder, Class<T> responseType) {
+        return super.send(Method.GET, requestBody, headerBuilder, responseType);
+    }
 }

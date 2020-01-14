@@ -12,9 +12,8 @@ public class AuthHeaderSupplier implements HeaderSupplier {
     public String get() {
         HttpClient httpClient = new HttpClientImpl(
                 URI.create(url),
-                new HeaderBuilder(),
                 new JacksonJsonMappingProvider());
-        return httpClient.send(Method.POST,  new AuthRequest("user"), HttpClientImplTest.ApiResponse.class).getMessage();
+        return httpClient.post(new AuthRequest("user"), new HeaderBuilder(), HttpClientImplTest.ApiResponse.class).getMessage();
     }
 
     static class AuthRequest {

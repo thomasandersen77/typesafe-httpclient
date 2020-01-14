@@ -31,11 +31,10 @@ class HttpClientImplTest {
 
         HttpClient abstractHttpClient = new HttpClientImpl(
                 URI.create("http://localhost:" + wiremock.port() + "/"),
-                headerBuilder,
                 new JacksonJsonMappingProvider()
         );
 
-        ApiResponse res = abstractHttpClient.send(Method.GET, LocalDate.now(), ApiResponse.class);
+        ApiResponse res = abstractHttpClient.get(LocalDate.now(), headerBuilder, ApiResponse.class);
         assertNotNull(res);
     }
 
@@ -47,12 +46,11 @@ class HttpClientImplTest {
 
         HttpClient abstractHttpClient = new HttpClientImpl(
                 URI.create("http://localhost:" + wiremock.port() + "/"),
-                headerBuilder,
                 new JacksonJsonMappingProvider(),
                 List.of(new LoggingHttpInterceptor())
         );
 
-        ApiResponse res = abstractHttpClient.send(Method.GET, LocalDate.now(), ApiResponse.class);
+        ApiResponse res = abstractHttpClient.get(LocalDate.now(), headerBuilder, ApiResponse.class);
         assertNotNull(res);
     }
 

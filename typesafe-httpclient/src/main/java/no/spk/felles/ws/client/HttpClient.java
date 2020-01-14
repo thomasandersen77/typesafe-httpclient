@@ -9,4 +9,6 @@ public interface HttpClient {
 
     <T> T post(Object requestBody, Class<T> responseType);
     <T> T get(Object requestBody, Class<T> responseType);
+    <T> T post(Object requestBody, HeaderBuilder headerBuilder, Class<T> responseType);
+    <T> T get(Object requestBody, HeaderBuilder headerBuilder, Class<T> responseType);
 }
