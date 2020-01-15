@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import static java.util.Collections.emptyList;
+import static java.util.Objects.requireNonNull;
 
 public abstract class AbstractHttpClient {
     private static final Logger log = LoggerFactory.getLogger(AbstractHttpClient.class);
@@ -28,12 +29,15 @@ public abstract class AbstractHttpClient {
     }
 
     public AbstractHttpClient(URI uri, JsonMappingProvider jsonMappingProvider, List<HttpInterceptor> httpInterceptors) {
+        requireNonNull(uri, "URI can not be null");
+        requireNonNull(uri, "JsonMappingProvider can not be null");
+        requireNonNull(httpInterceptors, "HttpInterceptor list can not be null");
         this.uri = uri;
         this.jsonMappingProvider = jsonMappingProvider;
         this.httpInterceptors = httpInterceptors;
     }
 
-    public <R> R send(Method method, Object requestBody, HeaderBuilder headerBuilder, Class<R> responseType) {
+    public final <R> TypedResponse<R> send(Method method, Object requestBody, HeaderBuilder headerBuilder, Class<R> responseType) {
         try {
             HttpClient client = HttpClient.newBuilder().build();
 
@@ -41,16 +45,10 @@ public abstract class AbstractHttpClient {
             Map<String, Object> httpHeadersMap = headerBuilder.build();
             RequestContext requestContext = new RequestContext(uri, httpHeadersMap, method, jsonBody);
             httpInterceptors.forEach(httpInterceptor -> {
-                httpInterceptor.doPreRequest(requestContext);
+                httpInterceptor.beforeRequest(requestContext);
             });
 
-            HttpRequest.Builder builder = HttpRequest.newBuilder();
-            populateHeaders(builder, httpHeadersMap);
-            HttpRequest request = builder
-                    .timeout(Duration.ofSeconds(30))
-                    .uri(requestContext.getUri())
-                    .method(method.name(), HttpRequest.BodyPublishers.ofString(jsonBody, StandardCharsets.UTF_8))
-                    .build();
+            HttpRequest request = buildRequest(method, jsonBody, httpHeadersMap, requestContext);
 
 
             HttpResponse.BodyHandler<String> handler =
@@ -64,10 +62,27 @@ public abstract class AbstractHttpClient {
                 throw new HttpClientError(requestContext.getUri(), method, httpResponse.statusCode(), httpResponse.headers(), httpResponse.body());
             }
 
-            return jsonMappingProvider.fromJson(httpResponse.body(), responseType);
+            ResponsContext responsContext = new ResponsContext(requestContext.getUri(), method, httpResponse.headers().map(), httpResponse.body());
+            httpInterceptors.forEach(httpInterceptor -> {
+                httpInterceptor.afterRequest(responsContext);
+            });
+
+            R type = jsonMappingProvider.fromJson(httpResponse.body(), responseType);
+            TypedResponse<R> typedResponse = new TypedResponse<>(httpResponse.statusCode(), httpResponse.headers().map(), type);
+            return typedResponse;
         } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private HttpRequest buildRequest(Method method, String jsonBody, Map<String, Object> httpHeadersMap, RequestContext requestContext) {
+        HttpRequest.Builder builder = HttpRequest.newBuilder();
+        populateHeaders(builder, httpHeadersMap);
+        return builder
+                .timeout(Duration.ofSeconds(30))
+                .uri(requestContext.getUri())
+                .method(method.name(), HttpRequest.BodyPublishers.ofString(jsonBody, StandardCharsets.UTF_8))
+                .build();
     }
 
     @SuppressWarnings("unchecked")

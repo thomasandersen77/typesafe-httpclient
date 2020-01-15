@@ -34,7 +34,8 @@ class HttpClientImplTest {
                 new JacksonJsonMappingProvider()
         );
 
-        ApiResponse res = httpClient.get(LocalDate.now(), headerBuilder, ApiResponse.class);
+        TypedResponse<ApiResponseDto> typedResponse = httpClient.get(LocalDate.now(), headerBuilder, ApiResponseDto.class);
+        ApiResponseDto res = typedResponse.getType();
         assertNotNull(res);
     }
 
@@ -50,7 +51,8 @@ class HttpClientImplTest {
                 List.of(new LoggingHttpInterceptor())
         );
 
-        ApiResponse res = httpClient.get(LocalDate.now(), headerBuilder, ApiResponse.class);
+        TypedResponse<ApiResponseDto> typedResponse = httpClient.get(LocalDate.now(), headerBuilder, ApiResponseDto.class);
+        ApiResponseDto res = typedResponse.getType();
         assertNotNull(res);
     }
 
@@ -61,13 +63,13 @@ class HttpClientImplTest {
                 .withHeader("Authorization", equalTo("CAN_ACCESS:TRUE"))
                 .willReturn(aResponse()
                         .withBody(
-                                new ObjectMapper().writeValueAsString(new ApiResponse("api respons", 100))
+                                new ObjectMapper().writeValueAsString(new ApiResponseDto("api respons", 100))
                         )));
 
         wiremock.stubFor(post(urlEqualTo("/authorize"))
                 .willReturn(aResponse()
                         .withBody(
-                            new ObjectMapper().writeValueAsString(new ApiResponse("CAN_ACCESS:TRUE", 200))
+                            new ObjectMapper().writeValueAsString(new ApiResponseDto("CAN_ACCESS:TRUE", 200))
                         )));
     }
 
@@ -76,11 +78,11 @@ class HttpClientImplTest {
         wiremock.stop();
     }
 
-    static class ApiResponse {
-        private ApiResponse(){
+    static class ApiResponseDto {
+        private ApiResponseDto(){
             // json serialization
         }
-        public ApiResponse(String message, int code) {
+        public ApiResponseDto(String message, int code) {
             this.message = message;
             this.code = code;
         }

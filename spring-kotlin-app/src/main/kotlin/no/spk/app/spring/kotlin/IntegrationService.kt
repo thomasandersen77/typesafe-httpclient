@@ -10,7 +10,7 @@ class IntegrationService (val client: HttpClient){
     fun callRemoteService(vararg heaaders : String): String {
         val headerBuilder = HeaderBuilder().withHeader("key", "value")
         val response = client.get("{}", headerBuilder, Response::class.java)
-        return response.message
+        return response.type.message
     }
 
     inner class Response(val message : String) {}
