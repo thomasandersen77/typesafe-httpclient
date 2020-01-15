@@ -22,39 +22,42 @@ public abstract class AbstractHttpClient {
     private static final Logger log = LoggerFactory.getLogger(AbstractHttpClient.class);
     private final URI uri;
     private JsonMappingProvider jsonMappingProvider;
-    private List<HttpInterceptor> httpInterceptors;
+    private List<Interceptor> interceptors;
 
     public AbstractHttpClient(URI uri, JsonMappingProvider jsonMappingProvider) {
         this(uri, jsonMappingProvider, emptyList());
     }
 
-    public AbstractHttpClient(URI uri, JsonMappingProvider jsonMappingProvider, List<HttpInterceptor> httpInterceptors) {
+    public AbstractHttpClient(URI uri, JsonMappingProvider jsonMappingProvider, List<Interceptor> interceptors) {
         requireNonNull(uri, "URI can not be null");
         requireNonNull(uri, "JsonMappingProvider can not be null");
-        requireNonNull(httpInterceptors, "HttpInterceptor list can not be null");
+        requireNonNull(interceptors, "HttpInterceptor list can not be null");
         this.uri = uri;
         this.jsonMappingProvider = jsonMappingProvider;
-        this.httpInterceptors = httpInterceptors;
+        this.interceptors = interceptors;
     }
 
-    public final <R> TypedResponse<R> send(Method method, Object requestBody, HeaderBuilder headerBuilder, Class<R> responseType) {
+    public final <R> TypedResponse<R> send(final Method method, final Object requestBody, final HeaderBuilder headerBuilder, final Class<R> responseType) {
         try {
             HttpClient client = HttpClient.newBuilder().build();
 
             String jsonBody = jsonMappingProvider.toJson(requestBody);
             Map<String, Object> httpHeadersMap = headerBuilder.build();
             RequestContext requestContext = new RequestContext(uri, httpHeadersMap, method, jsonBody);
-            httpInterceptors.forEach(httpInterceptor -> {
-                httpInterceptor.beforeRequest(requestContext);
+            interceptors.forEach(interceptor -> {
+                interceptor.beforeRequest(requestContext);
             });
 
             HttpRequest request = buildRequest(method, jsonBody, httpHeadersMap, requestContext);
 
-
-            HttpResponse.BodyHandler<String> handler =
-                    responseInfo -> HttpResponse.BodySubscribers.ofString(StandardCharsets.UTF_8);
+            HttpResponse.BodyHandler<String> handler = responseInfo -> HttpResponse.BodySubscribers.ofString(StandardCharsets.UTF_8);
 
             HttpResponse<String> httpResponse = client.send(request, handler);
+
+            ResponseContext responseContext = new ResponseContext(httpResponse.statusCode(), requestContext.getUri(), method, httpResponse.headers().map(), httpResponse.body());
+            interceptors.forEach(interceptor -> {
+                interceptor.afterRequest(responseContext);
+            });
 
             if(httpResponse.statusCode() >= 500) {
                 throw new HttpServerError(requestContext.getUri(), method, httpResponse.statusCode(), httpResponse.headers(), httpResponse.body());
@@ -62,14 +65,9 @@ public abstract class AbstractHttpClient {
                 throw new HttpClientError(requestContext.getUri(), method, httpResponse.statusCode(), httpResponse.headers(), httpResponse.body());
             }
 
-            ResponsContext responsContext = new ResponsContext(requestContext.getUri(), method, httpResponse.headers().map(), httpResponse.body());
-            httpInterceptors.forEach(httpInterceptor -> {
-                httpInterceptor.afterRequest(responsContext);
-            });
 
             R type = jsonMappingProvider.fromJson(httpResponse.body(), responseType);
-            TypedResponse<R> typedResponse = new TypedResponse<>(httpResponse.statusCode(), httpResponse.headers().map(), type);
-            return typedResponse;
+            return new TypedResponse<>(httpResponse.statusCode(), httpResponse.headers().map(), type);
         } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -97,12 +95,6 @@ public abstract class AbstractHttpClient {
         });
     }
 
-    public void setJsonMappingProvider(JsonMappingProvider jsonMappingProvider) {
-        this.jsonMappingProvider = jsonMappingProvider;
-    }
 
-    public void setHttpInterceptors(List<HttpInterceptor> httpInterceptors) {
-        this.httpInterceptors = httpInterceptors;
-    }
 
 }

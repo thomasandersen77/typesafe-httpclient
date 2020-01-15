@@ -6,12 +6,17 @@ import java.net.URI;
 import java.util.List;
 
 public class HttpClientImpl extends AbstractHttpClient implements HttpClient{
+
+    public HttpClientImpl(URI uri, ClientConfiguration clientConfiguration) {
+        super(uri, clientConfiguration.getJsonMappingProvider(), clientConfiguration.getInterceptors());
+    }
+
     public HttpClientImpl(URI uri, JsonMappingProvider jsonMappingProvider) {
         super(uri, jsonMappingProvider);
     }
 
-    public HttpClientImpl(URI uri, JsonMappingProvider jsonMappingProvider, List<HttpInterceptor> httpInterceptors) {
-        super(uri, jsonMappingProvider, httpInterceptors);
+    public HttpClientImpl(URI uri, JsonMappingProvider jsonMappingProvider, List<Interceptor> interceptors) {
+        super(uri, jsonMappingProvider, interceptors);
     }
 
     @Override
@@ -24,14 +29,15 @@ public class HttpClientImpl extends AbstractHttpClient implements HttpClient{
         return super.send(Method.POST, requestBody, new HeaderBuilder(), responseType);
     }
 
-    @Override
-    public <T> TypedResponse<T> get(Object requestBody, Class<T> responseType) {
-        return super.send(Method.GET, requestBody, new HeaderBuilder(), responseType);
-    }
 
     @Override
     public <T> TypedResponse<T> post(Object requestBody, HeaderBuilder headerBuilder, Class<T> responseType) {
         return super.send(Method.POST, requestBody, headerBuilder, responseType);
+    }
+
+    @Override
+    public <T> TypedResponse<T> get(Object requestBody, Class<T> responseType) {
+        return super.send(Method.GET, requestBody, new HeaderBuilder(), responseType);
     }
 
     @Override

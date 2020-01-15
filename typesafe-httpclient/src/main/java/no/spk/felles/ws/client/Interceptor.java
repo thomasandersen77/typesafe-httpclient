@@ -1,10 +1,10 @@
 package no.spk.felles.ws.client;
 
 import no.spk.felles.ws.client.internal.RequestContext;
-import no.spk.felles.ws.client.internal.ResponsContext;
+import no.spk.felles.ws.client.internal.ResponseContext;
 
-public interface HttpInterceptor {
+public interface Interceptor {
     void beforeRequest(RequestContext requestContext);
 
-    void afterRequest(ResponsContext responsContext);
+    void afterRequest(ResponseContext responseContext);
 }

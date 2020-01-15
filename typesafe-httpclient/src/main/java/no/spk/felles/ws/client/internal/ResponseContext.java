@@ -7,14 +7,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class ResponsContext {
+public class ResponseContext {
 
+    private int httpStatus;
     private final URI uri;
     private final Method method;
     private final Map<String, List<String>> headers;
     private final String body;
 
-    public ResponsContext(URI uri, Method method, Map<String, List<String>> headers, final String body) {
+    public ResponseContext(int httpStatus, URI uri, Method method, Map<String, List<String>> headers, String body) {
+        this.httpStatus = httpStatus;
         this.uri = uri;
         this.method = method;
         this.headers = headers;
@@ -37,10 +39,15 @@ public class ResponsContext {
         return body;
     }
 
+    public int getHttpStatus() {
+        return httpStatus;
+    }
+
     @Override
     public String toString() {
-        return "ResponsContext{" +
-                "uri=" + uri +
+        return "ResponseContext{" +
+                "httpStatus=" + httpStatus +
+                ", uri=" + uri +
                 ", method=" + method +
                 ", headers=" + headers +
                 '}';

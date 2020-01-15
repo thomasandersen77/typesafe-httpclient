@@ -48,7 +48,7 @@ class HttpClientImplTest {
         HttpClient httpClient = new HttpClientImpl(
                 URI.create("http://localhost:" + wiremock.port() + "/"),
                 new JacksonJsonMappingProvider(),
-                List.of(new LoggingHttpInterceptor())
+                List.of(new LoggingInterceptor())
         );
 
         TypedResponse<ApiResponseDto> typedResponse = httpClient.get(LocalDate.now(), headerBuilder, ApiResponseDto.class);
