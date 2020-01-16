@@ -1,7 +1,6 @@
 package no.spk.app.spring.kotlin
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import no.spk.felles.ws.client.HeaderBuilder
 import no.spk.felles.ws.client.HttpClient
 import no.spk.felles.ws.client.HttpClientImpl
 import no.spk.felles.ws.client.JsonMappingProvider

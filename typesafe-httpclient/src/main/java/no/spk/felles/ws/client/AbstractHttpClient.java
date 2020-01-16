@@ -1,6 +1,5 @@
-package no.spk.felles.ws.client.internal;
+package no.spk.felles.ws.client;
 
-import no.spk.felles.ws.client.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,12 +36,12 @@ public abstract class AbstractHttpClient {
         this.interceptors = interceptors;
     }
 
-    public final <R> TypedResponse<R> send(final Method method, final Object requestBody, final HeaderBuilder headerBuilder, final Class<R> responseType) {
+    public final <R> TypedResponse<R> send(final Method method, final Object requestBody, final Headers headers, final Class<R> responseType) {
         try {
             HttpClient client = HttpClient.newBuilder().build();
 
             String jsonBody = jsonMappingProvider.toJson(requestBody);
-            Map<String, Object> httpHeadersMap = headerBuilder.build();
+            Map<String, Object> httpHeadersMap = headers.build();
             RequestContext requestContext = new RequestContext(uri, httpHeadersMap, method, jsonBody);
             interceptors.forEach(interceptor -> {
                 interceptor.beforeRequest(requestContext);

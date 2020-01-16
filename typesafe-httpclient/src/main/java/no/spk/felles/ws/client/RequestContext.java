@@ -1,4 +1,4 @@
-package no.spk.felles.ws.client.internal;
+package no.spk.felles.ws.client;
 
 import no.spk.felles.ws.client.Method;
 

@@ -5,21 +5,21 @@ import java.util.List;
 import java.util.Objects;
 
 public class ClientConfiguration {
-    private HeaderBuilder headerBuilder;
+    private Headers headers;
     private List<Interceptor> interceptors = Collections.emptyList();
     private JsonMappingProvider jsonMappingProvider;
 
-    public ClientConfiguration(HeaderBuilder headerBuilder,
+    public ClientConfiguration(Headers headers,
                                List<Interceptor> interceptors,
                                JsonMappingProvider jsonMappingProvider) {
         Objects.requireNonNull(jsonMappingProvider, "JsonMappingProvider can not be null. Provide an implementation");
-        this.headerBuilder = headerBuilder != null ? headerBuilder : new HeaderBuilder();
+        this.headers = headers != null ? headers : new Headers();
         this.interceptors = interceptors;
         this.jsonMappingProvider = jsonMappingProvider;
     }
 
-    public HeaderBuilder getHeaderBuilder() {
-        return headerBuilder;
+    public Headers getHeaders() {
+        return headers;
     }
 
     public List<Interceptor> getInterceptors() {

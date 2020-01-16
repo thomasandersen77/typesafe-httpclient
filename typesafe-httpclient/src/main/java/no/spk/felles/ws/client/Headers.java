@@ -6,24 +6,24 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-public class HeaderBuilder {
+public class Headers {
     private Map<String, Object> headers = new HashMap<>();
 
-    public HeaderBuilder withHeader(String key, Supplier<String> value) {
+    public Headers put(String key, Supplier<String> value) {
         requireNonNull(key, "Header key can not be null");
         requireNonNull(value, "Header value can not be null");
         headers.put(key, value);
         return this;
     }
 
-    public HeaderBuilder withHeader(String key, String value) {
+    public Headers put(String key, String value) {
         requireNonNull(key, "Header key can not be null");
         requireNonNull(value, "Header value can not be null");
         headers.put(key, value);
         return this;
     }
 
-    public Map<String, Object>  build() {
+    Map<String, Object>  build() {
         return headers;
     }
 }

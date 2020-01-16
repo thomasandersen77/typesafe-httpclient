@@ -1,7 +1,5 @@
 package no.spk.felles.ws.client;
 
-import no.spk.felles.ws.client.internal.AbstractHttpClient;
-
 import java.net.URI;
 import java.util.List;
 
@@ -21,27 +19,27 @@ public class HttpClientImpl extends AbstractHttpClient implements HttpClient{
 
     @Override
     public <T> TypedResponse<T> send(Method method, Object requestBody, Class<T> responseType) {
-        return super.send(method, requestBody, new HeaderBuilder(), responseType);
+        return super.send(method, requestBody, new Headers(), responseType);
     }
 
     @Override
     public <T> TypedResponse<T> post(Object requestBody, Class<T> responseType) {
-        return super.send(Method.POST, requestBody, new HeaderBuilder(), responseType);
+        return super.send(Method.POST, requestBody, new Headers(), responseType);
     }
 
 
     @Override
-    public <T> TypedResponse<T> post(Object requestBody, HeaderBuilder headerBuilder, Class<T> responseType) {
-        return super.send(Method.POST, requestBody, headerBuilder, responseType);
+    public <T> TypedResponse<T> post(Object requestBody, Headers headers, Class<T> responseType) {
+        return super.send(Method.POST, requestBody, headers, responseType);
     }
 
     @Override
     public <T> TypedResponse<T> get(Object requestBody, Class<T> responseType) {
-        return super.send(Method.GET, requestBody, new HeaderBuilder(), responseType);
+        return super.send(Method.GET, requestBody, new Headers(), responseType);
     }
 
     @Override
-    public <T> TypedResponse<T> get(Object requestBody, HeaderBuilder headerBuilder, Class<T> responseType) {
-        return super.send(Method.GET, requestBody, headerBuilder, responseType);
+    public <T> TypedResponse<T> get(Object requestBody, Headers headers, Class<T> responseType) {
+        return super.send(Method.GET, requestBody, headers, responseType);
     }
 }

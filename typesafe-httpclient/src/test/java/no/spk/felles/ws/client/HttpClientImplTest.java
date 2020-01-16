@@ -25,25 +25,25 @@ class HttpClientImplTest {
 
     @Test
     void sendGetRequest() {
-        HeaderBuilder headerBuilder = new HeaderBuilder()
-                .withHeader("Authorization", new AuthHeaderSupplier("http://localhost:" + wiremock.port() + "/authorize"))
-                .withHeader("Content-Type", "application/json");
+        Headers headers = new Headers()
+                .put("Authorization", new AuthHeaderSupplier("http://localhost:" + wiremock.port() + "/authorize"))
+                .put("Content-Type", "application/json");
 
         HttpClient httpClient = new HttpClientImpl(
                 URI.create("http://localhost:" + wiremock.port() + "/"),
                 new JacksonJsonMappingProvider()
         );
 
-        TypedResponse<ApiResponseDto> typedResponse = httpClient.get(LocalDate.now(), headerBuilder, ApiResponseDto.class);
+        TypedResponse<ApiResponseDto> typedResponse = httpClient.get(LocalDate.now(), headers, ApiResponseDto.class);
         ApiResponseDto res = typedResponse.getType();
         assertNotNull(res);
     }
 
     @Test
     void sendGetRequestWithHttpInterceptors() {
-        HeaderBuilder headerBuilder = new HeaderBuilder()
-                .withHeader("Authorization", new AuthHeaderSupplier("http://localhost:" + wiremock.port() + "/authorize"))
-                .withHeader("Content-Type", "application/json");
+        Headers headers = new Headers()
+                .put("Authorization", new AuthHeaderSupplier("http://localhost:" + wiremock.port() + "/authorize"))
+                .put("Content-Type", "application/json");
 
         HttpClient httpClient = new HttpClientImpl(
                 URI.create("http://localhost:" + wiremock.port() + "/"),
@@ -51,7 +51,7 @@ class HttpClientImplTest {
                 List.of(new LoggingInterceptor())
         );
 
-        TypedResponse<ApiResponseDto> typedResponse = httpClient.get(LocalDate.now(), headerBuilder, ApiResponseDto.class);
+        TypedResponse<ApiResponseDto> typedResponse = httpClient.get(LocalDate.now(), headers, ApiResponseDto.class);
         ApiResponseDto res = typedResponse.getType();
         assertNotNull(res);
     }
