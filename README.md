@@ -48,4 +48,5 @@ class ClientConfiguration(){
 				return mapper
 			}
 	}
-}```
+}
+```
