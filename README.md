@@ -1,7 +1,7 @@
 # Typesafe HttpClient Framework
 
 
-THF is a very small framework built on top of Java 10´s HttpClient. The goal is to support some concepts found in 
+THCf is a very small framework built on top of Java 10´s HttpClient. The goal is to support some concepts found in 
 Spring RestTemplate and JerseyClient - but without dependencies to third party libraries.
 
 Currently the framework supports:
